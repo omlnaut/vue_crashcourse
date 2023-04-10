@@ -1,5 +1,4 @@
 <script>
-import AddTaskVue from './components/AddTask.vue'
 import Header from './components/Header.vue'
 import Tasks from './components/Tasks.vue'
 import AddTask from './components/AddTask.vue'
@@ -24,31 +23,22 @@ export default {
     toggleReminder(id) {
       this.tasks = this.tasks.map(task => task.id === id ? {...task, reminder: !task.reminder} : task)
     },
+    async fetchTasks() {
+      const res = await fetch('/api/tasks')
+      const data = await res.json()
+      return data
+    },
+    async fetchTask(id) {
+      const res = await fetch(`/api/tasks/${id}`)
+      const data = await res.json()
+      return data
+    },
     addTask(task) {
       this.tasks.push(task)
     }
   },
-  created(){
-    this.tasks = [
-      {
-        id: 1,
-        text: 'Doctors Appointment',
-        day: 'Feb 5th at 2:30pm',
-        reminder: true
-      },
-      {
-        id: 2,
-        text: 'Meeting at School',
-        day: 'Feb 6th at 1:30pm',
-        reminder: true
-      },
-      {
-        id: 3,
-        text: 'Food Shopping',
-        day: 'Feb 5th at 2:30pm',
-        reminder: false
-      }
-    ]
+  async created(){
+    this.tasks = await this.fetchTasks();
   }
 }
 
