@@ -23,8 +23,18 @@ export default {
       })
       res.status === 200 ? this.tasks = this.tasks.filter(task => task.id !== id) : alert('Error Deleting This Task')
     },
-    toggleReminder(id) {
-      this.tasks = this.tasks.map(task => task.id === id ? {...task, reminder: !task.reminder} : task)
+    async toggleReminder(id) {
+      const taskToToggle = await this.fetchTask(id)
+      const updatedTask = {...taskToToggle, reminder: !taskToToggle.reminder}
+      const res = await fetch(`/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(updatedTask)
+      })
+      const data = await res.json()
+      this.tasks = this.tasks.map(task => task.id === id ? {...task, reminder: data.reminder} : task)
     },
     async fetchTasks() {
       const res = await fetch('/api/tasks')
